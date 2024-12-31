@@ -1,0 +1,166 @@
+#include <stdio.h>
+#include <string.h>
+
+// Structure for Property
+struct Property {
+    int id;
+    char location[50];
+    float price;
+    float size; // in square feet
+    char type[20]; // House, Apartment, etc.
+};
+
+// Global variables
+struct Property properties[100];
+int propertyCount = 0;
+
+// Function prototypes
+void addProperty();
+void displayProperties();
+void searchByLocation();
+void filterByPriceRange();
+void menu();
+
+int main() {
+    menu();
+    return 0;
+}
+
+// Function to display menu
+void menu() {
+    int choice;
+    do {
+        printf("\n--- Real Estate Management System ---\n");
+        printf("1. Add Property\n");
+        printf("2. Display All Properties\n");
+        printf("3. Search by Location\n");
+        printf("4. Filter by Price Range\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addProperty();
+                break;
+            case 2:
+                displayProperties();
+                break;
+            case 3:
+                searchByLocation();
+                break;
+            case 4:
+                filterByPriceRange();
+                break;
+            case 5:
+                printf("Exiting the program. Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    } while (choice != 5);
+}
+
+// Function to add a new property
+void addProperty() {
+    if (propertyCount >= 100) {
+        printf("Property list is full!\n");
+        return;
+    }
+
+    struct Property newProperty;
+    newProperty.id = propertyCount + 1;
+
+    printf("Enter location: ");
+    getchar(); // Clear newline character
+    fgets(newProperty.location, 50, stdin);
+    newProperty.location[strcspn(newProperty.location, "\n")] = '\0'; // Remove newline
+
+    printf("Enter price: ");
+    scanf("%f", &newProperty.price);
+
+    printf("Enter size (in square feet): ");
+    scanf("%f", &newProperty.size);
+
+    printf("Enter type (House/Apartment/Plot): ");
+    getchar(); // Clear newline character
+    fgets(newProperty.type, 20, stdin);
+    newProperty.type[strcspn(newProperty.type, "\n")] = '\0'; // Remove newline
+
+    properties[propertyCount++] = newProperty;
+    printf("Property added successfully!\n");
+}
+
+// Function to display all properties
+void displayProperties() {
+    if (propertyCount == 0) {
+        printf("No properties to display!\n");
+        return;
+    }
+
+    printf("\n--- List of Properties ---\n");
+    for (int i = 0; i < propertyCount; i++) {
+        printf("ID: %d\n", properties[i].id);
+        printf("Location: %s\n", properties[i].location);
+        printf("Price: %.2f\n", properties[i].price);
+        printf("Size: %.2f sq. ft.\n", properties[i].size);
+        printf("Type: %s\n", properties[i].type);
+        printf("-----------------------\n");
+    }
+}
+
+// Function to search properties by location
+void searchByLocation() {
+    char searchLocation[50];
+    int found = 0;
+
+    printf("Enter location to search: ");
+    getchar(); // Clear newline character
+    fgets(searchLocation, 50, stdin);
+    searchLocation[strcspn(searchLocation, "\n")] = '\0'; // Remove newline
+
+    printf("\n--- Properties in %s ---\n", searchLocation);
+    for (int i = 0; i < propertyCount; i++) {
+        if (strcmp(properties[i].location, searchLocation) == 0) {
+            printf("ID: %d\n", properties[i].id);
+            printf("Price: %.2f\n", properties[i].price);
+            printf("Size: %.2f sq. ft.\n", properties[i].size);
+            printf("Type: %s\n", properties[i].type);
+            printf("-----------------------\n");
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("No properties found in %s.\n", searchLocation);
+    }
+}
+
+// Function to filter properties by price range
+void filterByPriceRange() {
+    float minPrice, maxPrice;
+    int found = 0;
+
+    printf("Enter minimum price: ");
+    scanf("%f", &minPrice);
+
+    printf("Enter maximum price: ");
+    scanf("%f", &maxPrice);
+
+    printf("\n--- Properties in Price Range %.2f to %.2f ---\n", minPrice, maxPrice);
+    for (int i = 0; i < propertyCount; i++) {
+        if (properties[i].price >= minPrice && properties[i].price <= maxPrice) {
+            printf("ID: %d\n", properties[i].id);
+            printf("Location: %s\n", properties[i].location);
+            printf("Price: %.2f\n", properties[i].price);
+            printf("Size: %.2f sq. ft.\n", properties[i].size);
+            printf("Type: %s\n", properties[i].type);
+            printf("-----------------------\n");
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        printf("No properties found in this price range.\n");
+    }
+}
